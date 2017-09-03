@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -18,6 +19,16 @@ class MainActivity : AppCompatActivity() {
             var addItemIntent = Intent(this, AddItemActivity::class.java)
             startActivity(addItemIntent)
         }
+
+
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+
+        var myItem = Dog()
+        myItem.item = "Do the Washing"
+        myItem.important = true
+
+        realm.commitTransaction()
 
     }
 
