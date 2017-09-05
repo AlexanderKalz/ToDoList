@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -19,17 +21,27 @@ class MainActivity : AppCompatActivity() {
             var addItemIntent = Intent(this, AddItemActivity::class.java)
             startActivity(addItemIntent)
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
 
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
+        val query = realm.where(ToDOItem::class.java)
+        val results = query.findAll()
 
-        var myItem = Dog()
-        myItem.item = "Do the Washing"
-        myItem.important = true
+        val listView = findViewById<ListView>(R.id.lvToDo)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, results)
 
-        realm.commitTransaction()
+        listView.adapter = adapter
 
+        listView.setOnItemClickListener { adapterView, view, i, l ->
+            val selectedToDo = results[i]
+            val completeIntent = Intent(this, CompleteActivity::class.java)
+            completeIntent.putExtra("item", selectedToDo.getId())
+            startActivity(completeIntent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
